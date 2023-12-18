@@ -8,7 +8,7 @@ xapi.config.set('HttpClient Mode', 'On');
 //
 // This macro is built around the way this quote server responds.
 //
-const url = 'https://quote-garden.herokuapp.com/api/v3/quotes/random';
+const url = 'https://api.quotable.io/random?maxLength=105';
 
 //
 // get a random quote from the quote server
@@ -18,11 +18,11 @@ async function* getQuote(Url) {
   while (true) {
     const result = await xapi.Command.HttpClient.Get({Url})
     const data = JSON.parse(result.Body)
-    const {data: [{quoteText: text, quoteAuthor: author}]} = data
-    const str = author + ": " + text
-
-    if (str.length <= 128) {
-      yield str
+      
+    const quote = data.author + ": " + data.content
+    
+    if (quote.length <= 128) {
+      yield quote
       return
     } else {
       yield false
@@ -35,9 +35,9 @@ async function* getQuote(Url) {
 // When a call hangs up, get the quote and update CustomMessage
 //
 xapi.event.on('CallDisconnect', async (event) => {
-  let str
+  let quote
   for await (const result of getQuote(url)) {
-    str = result   
+    quote = result   
   }
-  xapi.Config.UserInterface.CustomMessage.set(str)
+  xapi.Config.UserInterface.CustomMessage.set(quote)
 })
