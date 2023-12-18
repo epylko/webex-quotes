@@ -2,10 +2,6 @@ import xapi from 'xapi';
 xapi.config.set('HttpClient Mode', 'On');
 
 //
-// API from https://opensourcelibs.com/lib/quotegarden
-//
-
-//
 // This macro is built around the way this quote server responds.
 //
 const url = 'https://api.quotable.io/random?maxLength=105';
